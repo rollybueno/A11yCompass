@@ -17,8 +17,8 @@ const STYLE = `
   max-width: min(360px, 90vw);
   background: #1c2430;
   color: #faf7f0;
-  font: 12px/1.35 "Atkinson Hyperlegible", "Segoe UI", sans-serif;
-  padding: 6px 8px;
+  font: 14px/1.45 "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  padding: 8px 10px;
   border-radius: 2px;
   box-shadow: 0 1px 2px rgba(28, 36, 48, 0.35);
 }
@@ -29,9 +29,9 @@ const STYLE = `
   transform: translateY(-100%);
   background: #1c2430;
   color: #faf7f0;
-  font: 700 11px/1.2 "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  font: 700 14px/1.3 "Atkinson Hyperlegible", "Segoe UI", sans-serif;
   letter-spacing: 0.04em;
-  padding: 2px 6px;
+  padding: 4px 8px;
   white-space: nowrap;
   max-width: 100%;
   overflow: hidden;

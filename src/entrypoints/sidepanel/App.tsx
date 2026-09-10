@@ -525,6 +525,11 @@ function Issues({
   onCopy: (item: AuditResult) => void;
   copiedSelector: string | null;
 }) {
+  useEffect(() => {
+    if (!selectedId) return;
+    document.getElementById(`issue-${selectedId}`)?.scrollIntoView({ block: 'start' });
+  }, [selectedId]);
+
   return (
     <div className="split">
       <div className="filters">
@@ -560,11 +565,14 @@ function Issues({
         <ul className="waypoints">
           {results.map((item) => {
             const rule = ruleById.get(item.ruleId);
+            const open = item.id === selectedId && selected && selectedRule && item.id === selected.id;
             return (
-              <li key={item.id}>
+              <li key={item.id} id={`issue-${item.id}`} className={open ? 'waypoint-item is-open' : 'waypoint-item'}>
                 <button
                   type="button"
                   className={item.id === selectedId ? 'waypoint is-selected' : 'waypoint'}
+                  aria-expanded={item.id === selectedId}
+                  aria-controls={open ? `review-${item.id}` : undefined}
                   onClick={() => onSelect(item)}
                 >
                   <span className={`mark mark-${item.status}`} aria-hidden="true">
@@ -578,13 +586,45 @@ function Issues({
                     </span>
                   </span>
                 </button>
+                {open && selected && selectedRule && (
+                  <IssueDossier
+                    id={`review-${item.id}`}
+                    selected={selected}
+                    selectedRule={selectedRule}
+                    showWcag={showWcag}
+                    onLocate={onLocate}
+                    onCopy={onCopy}
+                    copiedSelector={copiedSelector}
+                  />
+                )}
               </li>
             );
           })}
         </ul>
       )}
-      {selected && selectedRule && (
-        <article className="dossier" aria-live="polite">
+    </div>
+  );
+}
+
+function IssueDossier({
+  id,
+  selected,
+  selectedRule,
+  showWcag,
+  onLocate,
+  onCopy,
+  copiedSelector,
+}: {
+  id: string;
+  selected: AuditResult;
+  selectedRule: NonNullable<ReturnType<typeof ruleById.get>>;
+  showWcag: boolean;
+  onLocate: (item: AuditResult) => void;
+  onCopy: (item: AuditResult) => void;
+  copiedSelector: string | null;
+}) {
+  return (
+        <article id={id} className="dossier" aria-live="polite">
           <header>
             <p className={`mark mark-${selected.status}`}>
               {SEVERITY_MARK[selected.status]} {SEVERITY_LABEL[selected.status]}
@@ -653,8 +693,6 @@ function Issues({
             )}
           </div>
         </article>
-      )}
-    </div>
   );
 }
 

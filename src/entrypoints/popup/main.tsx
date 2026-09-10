@@ -30,6 +30,12 @@ function Popup() {
             } catch {
               /* Restricted pages are explained in the side panel. */
             }
+            await chrome.sidePanel.setOptions({ enabled: false });
+            await chrome.sidePanel.setOptions({
+              tabId: tab.id,
+              path: 'sidepanel.html',
+              enabled: true,
+            });
             await chrome.sidePanel.open({ tabId: tab.id });
             window.close();
           })();

@@ -25,15 +25,15 @@
   --space-xl: 28px;
   --font-ui: 'Atkinson Hyperlegible', 'Segoe UI', sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
-  --size-ui: 14px;
-  --size-title: 18px;
-  --size-heading: 16px;
-  --size-caption: 12px;
-  --size-kicker: 11px;
+  --size-ui: 16px;
+  --size-title: 20px;
+  --size-heading: 18px;
+  --size-caption: 14px;
+  --size-kicker: 14px;
   --radius: 2px;
   font-family: var(--font-ui);
   font-size: var(--size-ui);
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--ink);
   background: var(--paper);
 }
@@ -157,8 +157,8 @@ button { cursor: pointer; }
   background: var(--needle);
   color: var(--paper-raised);
   border: 0;
-  min-height: 36px;
-  padding: var(--space-sm) 14px;
+  min-height: 44px;
+  padding: var(--space-sm) 16px;
   font-weight: 700;
 }
 
@@ -279,7 +279,12 @@ textarea {
   margin: 0 0 var(--space-lg);
   padding: 0;
   display: grid;
-  gap: 2px;
+  gap: var(--space-sm);
+}
+
+.waypoint-item {
+  display: grid;
+  gap: 0;
 }
 
 .waypoint {
@@ -292,7 +297,15 @@ textarea {
   padding: var(--space-sm);
 }
 
-.waypoint.is-selected { border-color: var(--ink); }
+.waypoint.is-selected {
+  border-color: var(--ink);
+}
+
+.waypoint-item.is-open .waypoint.is-selected {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: var(--rule);
+}
 
 .waypoint-title {
   display: block;
@@ -317,7 +330,8 @@ textarea {
 
 .dossier {
   background: var(--paper-raised);
-  border: 1px solid var(--rule-strong);
+  border: 1px solid var(--ink);
+  border-top: 1px solid var(--rule);
   padding: var(--space-md);
   display: grid;
   gap: var(--space-sm);

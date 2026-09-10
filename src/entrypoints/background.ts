@@ -83,8 +83,23 @@ async function ensureContent(tabId: number): Promise<void> {
   throw new Error('Review script did not start on this page. Reload the extension and try again.');
 }
 
+async function disableGlobalPanel(): Promise<void> {
+  await chrome.sidePanel.setOptions({ enabled: false });
+}
+
+async function pinPanelToTab(tabId: number): Promise<void> {
+  await chrome.sidePanel.setOptions({
+    tabId,
+    path: 'sidepanel.html',
+    enabled: true,
+  });
+}
+
 export default defineBackground(() => {
-  void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+  void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+  void disableGlobalPanel();
+  chrome.runtime.onInstalled.addListener(() => void disableGlobalPanel());
+  chrome.runtime.onStartup.addListener(() => void disableGlobalPanel());
 
   chrome.tabs.onRemoved.addListener((tabId: number) => injected.delete(tabId));
   chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
@@ -101,8 +116,10 @@ export default defineBackground(() => {
 
       if (message.type === 'OPEN_SIDE_PANEL') {
         void getActiveTab()
-          .then((tab) => {
-            if (tab.id) void chrome.sidePanel.open({ tabId: tab.id });
+          .then(async (tab) => {
+            if (!tab.id) return;
+            await pinPanelToTab(tab.id);
+            await chrome.sidePanel.open({ tabId: tab.id });
           })
           .catch(() => undefined);
         return false;

@@ -22,39 +22,39 @@ colors:
 typography:
   ui:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "14px"
+    fontSize: "16px"
     fontWeight: 400
-    lineHeight: 1.45
+    lineHeight: 1.5
     letterSpacing: "0.01em"
   title:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "18px"
+    fontSize: "20px"
     fontWeight: 700
     lineHeight: 1.25
     letterSpacing: "-0.02em"
   heading:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "16px"
+    fontSize: "18px"
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "-0.01em"
   caption:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "12px"
+    fontSize: "14px"
     fontWeight: 400
-    lineHeight: 1.4
+    lineHeight: 1.45
     letterSpacing: "0.01em"
   kicker:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "11px"
+    fontSize: "14px"
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "0.08em"
   mono:
     fontFamily: "ui-monospace, \"Cascadia Code\", \"SF Mono\", Menlo, monospace"
-    fontSize: "12px"
+    fontSize: "14px"
     fontWeight: 400
-    lineHeight: 1.4
+    lineHeight: 1.45
     letterSpacing: "0"
 rounded:
   sm: "2px"
@@ -71,8 +71,8 @@ components:
     textColor: "{colors.paper-raised}"
     typography: "{typography.ui}"
     rounded: "{rounded.sm}"
-    padding: "8px 14px"
-    height: "36px"
+    padding: "10px 16px"
+    height: "44px"
   button-primary-hover:
     backgroundColor: "{colors.needle-deep}"
     textColor: "{colors.paper-raised}"
@@ -80,8 +80,8 @@ components:
     backgroundColor: "{colors.paper-raised}"
     textColor: "{colors.ink}"
     rounded: "{rounded.sm}"
-    padding: "8px 14px"
-    height: "36px"
+    padding: "10px 16px"
+    height: "44px"
 ---
 
 ## Overview
@@ -96,7 +96,7 @@ Light chart paper (`#f3efe4`) is the working surface because reviewers sit in mi
 
 ## Typography
 
-Atkinson Hyperlegible is the only UI family. It exists because the Braille Institute designed it for low-vision readers, which is a product-specific reason. Use a tight 1.15–1.2 scale. Monospace is only for selectors, rule IDs, hex colors, and exported snippets.
+Atkinson Hyperlegible is the only UI family. It exists because the Braille Institute designed it for low-vision readers, which is a product-specific reason. Body text is 16px with 1.5 line-height; labels, selectors, and kickers stay at 14px so nothing in the panel falls into a caption-sized, unreadable range. Monospace is only for selectors, rule IDs, hex colors, and exported snippets.
 
 ## Layout
 
@@ -112,7 +112,7 @@ Square-ish (`2px`–`4px`). Map ticks and hairline rules, not pills. Status mark
 
 ## Components
 
-Primary button is needle-filled, 36px tall, labeled with a verb. Secondary buttons are outlined in `rule-strong`. Selected issue row uses a 1px ink rule around the row, not a thick colored bar. Focus ring is a 2px ink outline offset 2px. Empty states explain the next action (“Start a review of this page”). Loading uses a short “Surveying page…” status text, not a spinner occupying the canvas.
+Primary button is needle-filled, 44px tall, labeled with a verb. Secondary buttons are outlined in `rule-strong`. Selected issue row uses a 1px ink rule around the row, not a thick colored bar. Focus ring is a 2px ink outline offset 2px. Empty states explain the next action (“Start a review of this page”). Loading uses a short “Surveying page…” status text, not a spinner occupying the canvas.
 
 ## Do's and Don'ts
 
