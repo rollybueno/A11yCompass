@@ -1,0 +1,9 @@
+{
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": false,
+    "jsx": "react-jsx",
+    "types": ["chrome", "vitest/globals"]
+  },
+  "exclude": [".output", "node_modules", "scripts", "tests"]
+}

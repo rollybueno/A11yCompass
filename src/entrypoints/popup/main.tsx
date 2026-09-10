@@ -1,0 +1,48 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import '../sidepanel/styles.css';
+
+function Popup() {
+  return (
+    <main className="sheet" style={{ width: 320, padding: 20 }}>
+      <header className="brand" style={{ marginBottom: 16 }}>
+        <span className="compass" aria-hidden="true" />
+        <div>
+          <p className="product">A11yCompass</p>
+          <p className="host">Guided accessibility review</p>
+        </div>
+      </header>
+      <p>
+        Open the side panel to survey this page. Automated checks stay separate from manual review. Nothing is uploaded.
+      </p>
+      <button
+        type="button"
+        className="primary"
+        onClick={() => {
+          void (async () => {
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (!tab?.id) return;
+            try {
+              await chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['page-audit.js'],
+              });
+            } catch {
+              /* Restricted pages are explained in the side panel. */
+            }
+            await chrome.sidePanel.open({ tabId: tab.id });
+            window.close();
+          })();
+        }}
+      >
+        Open review panel
+      </button>
+    </main>
+  );
+}
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <Popup />
+  </StrictMode>,
+);

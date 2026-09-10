@@ -1,0 +1,151 @@
+import type { BackgroundToSidepanel, HostToContentMessage, SidepanelToBackground } from '../shared/messages';
+
+const injected = new Set<number>();
+
+const RESTRICTED = /^(chrome|chrome-extension|edge|about|devtools|view-source|chrome-search|chrome-untrusted|brave|opera):/i;
+
+function isRestrictedUrl(url: string): boolean {
+  if (!url) return false;
+  if (RESTRICTED.test(url)) return true;
+  return (
+    url.startsWith('https://chrome.google.com/webstore') ||
+    url.startsWith('https://chromewebstore.google.com')
+  );
+}
+
+function restrictedMessage(): string {
+  return 'This page cannot be reviewed. Open a normal http(s) webpage.';
+}
+
+function injectErrorMessage(url: string, error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  if (isRestrictedUrl(url) || /chrome:\/\//i.test(message) || /chrome-extension:\/\//i.test(message)) {
+    return restrictedMessage();
+  }
+  return message || 'Could not attach to this page. Reload the extension and try again.';
+}
+
+async function getActiveTab(): Promise<chrome.tabs.Tab> {
+  const lastFocused = await chrome.windows.getLastFocused({
+    windowTypes: ['normal'],
+  });
+  if (lastFocused.id != null) {
+    const inWindow = await chrome.tabs.query({ active: true, windowId: lastFocused.id });
+    if (inWindow[0]?.id) return inWindow[0];
+  }
+
+  const focused = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  if (focused[0]?.id) return focused[0];
+
+  const current = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (current[0]?.id) return current[0];
+
+  throw new Error('No active tab.');
+}
+
+async function ping(tabId: number): Promise<boolean> {
+  try {
+    const response = await chrome.tabs.sendMessage(tabId, { type: 'PING' });
+    return response?.type === 'PONG';
+  } catch {
+    return false;
+  }
+}
+
+async function ensureContent(tabId: number): Promise<void> {
+  const tab = await chrome.tabs.get(tabId);
+  const url = tab.url ?? '';
+  if (isRestrictedUrl(url)) {
+    throw new Error(restrictedMessage());
+  }
+
+  if (await ping(tabId)) {
+    injected.add(tabId);
+    return;
+  }
+
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ['page-audit.js'],
+      injectImmediately: true,
+    });
+  } catch (error) {
+    throw new Error(injectErrorMessage(url, error));
+  }
+
+  injected.add(tabId);
+  const started = Date.now();
+  while (Date.now() - started < 4000) {
+    if (await ping(tabId)) return;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error('Review script did not start on this page. Reload the extension and try again.');
+}
+
+export default defineBackground(() => {
+  void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+
+  chrome.tabs.onRemoved.addListener((tabId: number) => injected.delete(tabId));
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+    if (changeInfo.status === 'loading') injected.delete(tabId);
+  });
+
+  chrome.runtime.onMessage.addListener(
+    (
+      message: SidepanelToBackground | { type: string },
+      _sender: chrome.runtime.MessageSender,
+      sendResponse: (payload: BackgroundToSidepanel) => void,
+    ) => {
+      const respond = (payload: BackgroundToSidepanel) => sendResponse(payload);
+
+      if (message.type === 'OPEN_SIDE_PANEL') {
+        void getActiveTab()
+          .then((tab) => {
+            if (tab.id) void chrome.sidePanel.open({ tabId: tab.id });
+          })
+          .catch(() => undefined);
+        return false;
+      }
+
+      if (message.type === 'GET_TAB') {
+        void getActiveTab()
+          .then((tab) => {
+            if (!tab.id) {
+              respond({ type: 'ERROR', message: 'No active tab.' });
+              return;
+            }
+            respond({
+              type: 'TAB',
+              tabId: tab.id,
+              url: tab.url ?? '',
+              title: tab.title ?? '',
+            });
+          })
+          .catch((error: Error) => respond({ type: 'ERROR', message: error.message }));
+        return true;
+      }
+
+      if (message.type === 'ENSURE_CONTENT') {
+        const { tabId } = message as Extract<SidepanelToBackground, { type: 'ENSURE_CONTENT' }>;
+        void ensureContent(tabId)
+          .then(() => respond({ type: 'CONTENT_READY', tabId }))
+          .catch((error: Error) => respond({ type: 'ERROR', message: error.message }));
+        return true;
+      }
+
+      if (message.type === 'FORWARD') {
+        const { tabId, message: inner } = message as Extract<
+          SidepanelToBackground,
+          { type: 'FORWARD' }
+        >;
+        void chrome.tabs
+          .sendMessage(tabId, inner as HostToContentMessage)
+          .catch((error: Error) => respond({ type: 'ERROR', message: error.message }));
+        return false;
+      }
+
+      return false;
+    },
+  );
+});

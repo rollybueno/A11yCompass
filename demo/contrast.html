@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>A11yCompass demo — Contrast and focus</title>
+    <style>
+      .low { color: #b9ad96; }
+      .ghost { outline: none; }
+      .ghost:focus { outline: none; box-shadow: none; }
+    </style>
+  </head>
+  <body>
+    <p><strong>Synthetic demo page</strong> — contrast and keyboard focus.</p>
+    <main>
+      <h1>Contrast</h1>
+      <p class="low">This text sits on a light page at a ratio below 4.5:1.</p>
+      <button class="ghost" tabindex="3">Search</button>
+      <a class="ghost" href="#x">Click here</a>
+      <div aria-hidden="true"><a href="#hidden">Hidden link</a></div>
+    </main>
+  </body>
+</html>
