@@ -40,7 +40,7 @@ Confirmed for V1.0:
 - Locate element, copy selector, heading/landmark structure, overlay modes.
 - Guided keyboard and focus review with manual checklist status and notes.
 - Export Markdown and JSON.
-- Permissions limited to `activeTab`, `scripting`, `storage`, `sidePanel`, and http(s) host access for on-demand injection from the side panel.
+- Permissions limited to `activeTab`, `scripting`, `storage`, `sidePanel`, and optional http(s) host access requested when the reviewer starts a review. The review script is injected on demand. Local `file://` pages are out of the store build.
 
 Out of V1.0:
 

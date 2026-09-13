@@ -1,26 +1,17 @@
 import type { BackgroundToSidepanel, HostToContentMessage, SidepanelToBackground } from '../shared/messages';
+import { hasPageAccess, pageAccessError, pageOriginPattern } from '../shared/host-access';
 
 const injected = new Set<number>();
 
-const RESTRICTED = /^(chrome|chrome-extension|edge|about|devtools|view-source|chrome-search|chrome-untrusted|brave|opera):/i;
-
-function isRestrictedUrl(url: string): boolean {
-  if (!url) return false;
-  if (RESTRICTED.test(url)) return true;
-  return (
-    url.startsWith('https://chrome.google.com/webstore') ||
-    url.startsWith('https://chromewebstore.google.com')
-  );
-}
-
-function restrictedMessage(): string {
-  return 'This page cannot be reviewed. Open a normal http(s) webpage.';
-}
-
 function injectErrorMessage(url: string, error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
-  if (isRestrictedUrl(url) || /chrome:\/\//i.test(message) || /chrome-extension:\/\//i.test(message)) {
-    return restrictedMessage();
+  if (
+    !pageOriginPattern(url) ||
+    /chrome:\/\//i.test(message) ||
+    /chrome-extension:\/\//i.test(message) ||
+    /Cannot access/i.test(message)
+  ) {
+    return pageAccessError(url);
   }
   return message || 'Could not attach to this page. Reload the extension and try again.';
 }
@@ -55,8 +46,8 @@ async function ping(tabId: number): Promise<boolean> {
 async function ensureContent(tabId: number): Promise<void> {
   const tab = await chrome.tabs.get(tabId);
   const url = tab.url ?? '';
-  if (isRestrictedUrl(url)) {
-    throw new Error(restrictedMessage());
+  if (!(await hasPageAccess(url))) {
+    throw new Error(pageAccessError(url));
   }
 
   if (await ping(tabId)) {

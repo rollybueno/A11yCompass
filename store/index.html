@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>A11yCompass store listing preview</title>
+    <script type="module" src="./listing.ts"></script>
+  </head>
+  <body>
+    <div class="frame">
+      <section class="page" aria-label="Page under review">
+        <p class="eyebrow">Synthetic demo page</p>
+        <h1>Checkout</h1>
+        <p>Review the live page the way you would walk a site: automated waypoints first, then human judgment. This is not a compliance score.</p>
+        <form>
+          <input type="email" placeholder="Email address" />
+          <label for="phone">Phone</label>
+          <input id="phone" />
+          <button type="button" class="icon-only" aria-label=""><span class="ghost"></span></button>
+          <button type="submit" id="pay" class="pay">Pay</button>
+        </form>
+        <p class="caption page-caption" hidden>button  Unnamed control</p>
+      </section>
+      <aside class="panel-host" aria-label="A11yCompass">
+        <div class="sheet">
+          <header class="mast">
+            <div class="brand">
+              <span class="compass" aria-hidden="true"></span>
+              <div>
+                <p class="product">A11yCompass</p>
+                <p class="host">localhost</p>
+              </div>
+            </div>
+            <button type="button" class="icon-btn">Settings</button>
+          </header>
+          <section class="legend" aria-label="Review status">
+            <p class="kicker">Review status</p>
+            <dl class="counts">
+              <div>
+                <dt>Automated</dt>
+                <dd><b>2</b> errors · <b>1</b> warnings · <b>1</b> review</dd>
+              </div>
+              <div>
+                <dt>Manual</dt>
+                <dd>0 / 18 completed</dd>
+              </div>
+            </dl>
+            <div class="actions">
+              <button type="button" class="primary">Re-run review</button>
+            </div>
+          </section>
+          <nav class="layers" aria-label="Review layers">
+            <button type="button" class="layer" data-tab="overview">Overview</button>
+            <button type="button" class="layer" data-tab="issues">Issues</button>
+            <button type="button" class="layer" data-tab="structure">Structure</button>
+            <button type="button" class="layer" data-tab="keyboard">Keyboard</button>
+            <button type="button" class="layer" data-tab="inspector">Inspector</button>
+          </nav>
+          <main id="main">
+            <div class="view" data-view="overview">
+              <div class="stack">
+                <p class="lede">
+                  Automated checks found 2 errors and 1 item that needs a person. This is not a compliance score.
+                </p>
+                <button type="button" class="text-btn">Open issue list</button>
+                <div class="export">
+                  <button type="button" class="secondary">Export Markdown</button>
+                  <button type="button" class="secondary">Export JSON</button>
+                  <button type="button" class="secondary">Copy Markdown</button>
+                </div>
+                <p class="quiet">Manual review 0 / 18</p>
+              </div>
+            </div>
+            <div class="view" data-view="issues" hidden>
+              <div class="split">
+                <div class="filters">
+                  <label>
+                    Severity
+                    <select>
+                      <option>All</option>
+                    </select>
+                  </label>
+                  <label>
+                    Category
+                    <select>
+                      <option>All</option>
+                    </select>
+                  </label>
+                </div>
+                <ul class="waypoints">
+                  <li class="waypoint-item is-open">
+                    <button type="button" class="waypoint is-selected" aria-expanded="true">
+                      <span class="mark mark-error" aria-hidden="true">✕</span>
+                      <span>
+                        <span class="waypoint-title">Button has no accessible name</span>
+                        <span class="waypoint-meta">Error · form &gt; button</span>
+                      </span>
+                    </button>
+                    <article class="dossier">
+                      <header>
+                        <p class="mark mark-error">✕ Error</p>
+                        <h2>Button has no accessible name</h2>
+                      </header>
+                      <p>This control has no accessible name, so assistive technology cannot describe the action.</p>
+                      <dl>
+                        <div>
+                          <dt>Category</dt>
+                          <dd>Links and buttons</dd>
+                        </div>
+                        <div>
+                          <dt>Rule</dt>
+                          <dd><code>button-name-missing</code></dd>
+                        </div>
+                        <div>
+                          <dt>Related WCAG</dt>
+                          <dd>4.1.2 Name, Role, Value</dd>
+                        </div>
+                      </dl>
+                      <p><strong>Why this matters.</strong> A button without a name is silent or generic in a screen reader.</p>
+                      <div class="export">
+                        <button type="button" class="secondary">Locate element</button>
+                        <button type="button" class="secondary">Copy selector</button>
+                      </div>
+                    </article>
+                  </li>
+                  <li class="waypoint-item">
+                    <button type="button" class="waypoint">
+                      <span class="mark mark-error" aria-hidden="true">✕</span>
+                      <span>
+                        <span class="waypoint-title">Form control has no accessible name</span>
+                        <span class="waypoint-meta">Error · #phone</span>
+                      </span>
+                    </button>
+                  </li>
+                  <li class="waypoint-item">
+                    <button type="button" class="waypoint">
+                      <span class="mark mark-review" aria-hidden="true">◇</span>
+                      <span>
+                        <span class="waypoint-title">Placeholder is the only label</span>
+                        <span class="waypoint-meta">Review · input[type="email"]</span>
+                      </span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="view" data-view="inspector" hidden>
+              <div class="stack">
+                <p>Pick an element on the page to see role, accessible name, name source, and contrast.</p>
+                <div class="export">
+                  <button type="button" class="primary">Inspect element</button>
+                </div>
+                <dl class="inspect">
+                  <div>
+                    <dt>Element</dt>
+                    <dd><code>&lt;button type="submit"&gt;Pay&lt;/button&gt;</code></dd>
+                  </div>
+                  <div>
+                    <dt>Role</dt>
+                    <dd>button</dd>
+                  </div>
+                  <div>
+                    <dt>Accessible name</dt>
+                    <dd>“Pay”</dd>
+                  </div>
+                  <div>
+                    <dt>Name source</dt>
+                    <dd>contents</dd>
+                  </div>
+                  <div>
+                    <dt>Description</dt>
+                    <dd>None</dd>
+                  </div>
+                  <div>
+                    <dt>Focusable</dt>
+                    <dd>Yes</dd>
+                  </div>
+                  <div>
+                    <dt>Tab index</dt>
+                    <dd>implicit</dd>
+                  </div>
+                  <div>
+                    <dt>ARIA</dt>
+                    <dd>None</dd>
+                  </div>
+                  <div>
+                    <dt>Contrast</dt>
+                    <dd>#1c2430 on #faf7f0 · 12.6:1 · pass</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </main>
+        </div>
+      </aside>
+    </div>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const view = params.get('view') || 'overview';
+      document.querySelectorAll('.layer').forEach((tab) => {
+        tab.classList.toggle('is-active', tab.getAttribute('data-tab') === view);
+      });
+      document.querySelectorAll('.view').forEach((panel) => {
+        panel.hidden = panel.getAttribute('data-view') !== view;
+      });
+      if (view === 'issues') {
+        document.querySelector('.icon-only')?.classList.add('locate');
+      }
+      if (view === 'inspector') {
+        document.querySelector('.pay')?.classList.add('locate');
+      }
+    </script>
+  </body>
+</html>

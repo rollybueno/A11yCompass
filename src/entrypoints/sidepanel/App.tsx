@@ -25,7 +25,7 @@ import { ruleById } from '../../rules';
 import { checksByCategory, MANUAL_CHECKS } from '../../review/checklists';
 import { exportJson, exportMarkdown } from '../../review/reporters';
 import { loadManual, loadSettings, saveManual, saveSettings } from '../../storage/local';
-import { ensureContent, forward, getActiveTab, onContentMessage } from './messaging';
+import { attachToTab, forward, getActiveTab, onContentMessage } from './messaging';
 
 type View = 'overview' | 'issues' | 'structure' | 'keyboard' | 'inspector';
 
@@ -136,8 +136,8 @@ export function App() {
     setError(null);
     setBusy(true);
     try {
-      const active = await refreshTab();
-      await ensureContent(active.tabId);
+      const active = tab ?? (await refreshTab());
+      await attachToTab(active);
       await forward(active.tabId, { type: 'RUN_AUDIT' });
     } catch (err) {
       setBusy(false);
@@ -375,7 +375,7 @@ export function App() {
               if (!tab) return;
               setOverlay(mode);
               try {
-                await ensureContent(tab.tabId);
+                await attachToTab(tab);
                 await forward(tab.tabId, { type: 'SET_OVERLAY', mode });
               } catch (err) {
                 setError(err instanceof Error ? err.message : 'Could not set overlay.');
@@ -396,7 +396,7 @@ export function App() {
             onToggle={async () => {
               if (!tab) return;
               try {
-                await ensureContent(tab.tabId);
+                await attachToTab(tab);
                 if (keyboardOn) {
                   await forward(tab.tabId, { type: 'KEYBOARD_STOP' });
                   setKeyboardOn(false);
@@ -422,7 +422,7 @@ export function App() {
             onInspect={async () => {
               if (!tab) return;
               try {
-                await ensureContent(tab.tabId);
+                await attachToTab(tab);
                 setInspecting(true);
                 await forward(tab.tabId, { type: 'INSPECT_START' });
               } catch (err) {

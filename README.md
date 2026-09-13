@@ -17,14 +17,14 @@ The project does not claim that automated scanning can determine whether a websi
 
 ## Use
 
-1. Open a normal http(s) webpage (or a file in `demo/`).
-2. Click the A11yCompass icon — the side panel is the main workspace.
+1. Open a normal http(s) webpage. Demo fixtures in `demo/` should be served over http (for example `npx serve demo`).
+2. Click the A11yCompass icon — the side panel is the main workspace. Chrome will ask for access to that page; nothing is uploaded.
 3. Start a review.
 4. Filter issues, locate the element, inspect accessible name and role, view headings and landmarks, run keyboard review, mark manual checks, and export Markdown or JSON.
 
-Permissions: `activeTab`, `scripting`, `storage`, `sidePanel`, and host access to `http(s)` pages so a review can start from the side panel. Reviews stay on your device. See [PRIVACY.md](PRIVACY.md).
+Permissions: `activeTab`, `scripting`, `storage`, `sidePanel`, and optional host access to the http(s) page you choose to review. The review script is injected after you start a review. Reviews stay on your device. See [PRIVACY.md](PRIVACY.md) and [STORE.md](STORE.md).
 
-If an already-loaded unpacked build still cannot scan live pages, click **Reload** on `chrome://extensions` so the new host permissions apply.
+If an already-loaded unpacked build still cannot scan live pages, click **Reload** on `chrome://extensions` so the new optional host permissions apply.
 
 ## What V1.0 covers
 
@@ -41,7 +41,7 @@ Synthetic fixtures with known issues (labeled as such):
 - `demo/navigation.html`
 - `demo/contrast.html`
 
-Open them as local files, then run a review.
+Serve them over http (for example `npx serve demo`), then run a review. Local `file://` pages are not reviewed in the store build.
 
 ## Development
 

@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { requestPageAccess } from '../../shared/host-access';
 import '../sidepanel/styles.css';
 
 function Popup() {
@@ -23,12 +24,13 @@ function Popup() {
             const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
             if (!tab?.id) return;
             try {
+              if (tab.url) await requestPageAccess(tab.url);
               await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 files: ['page-audit.js'],
               });
             } catch {
-              /* Restricted pages are explained in the side panel. */
+              /* Restricted pages and denied access are explained in the side panel. */
             }
             await chrome.sidePanel.setOptions({ enabled: false });
             await chrome.sidePanel.setOptions({

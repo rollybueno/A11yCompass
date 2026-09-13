@@ -1,4 +1,5 @@
 import type { ContentToHostMessage, HostToContentMessage } from '../../shared/messages';
+import { requestPageAccess } from '../../shared/host-access';
 
 export async function getActiveTab(): Promise<{ tabId: number; url: string; title: string }> {
   const response = await chrome.runtime.sendMessage({ type: 'GET_TAB' });
@@ -9,6 +10,11 @@ export async function getActiveTab(): Promise<{ tabId: number; url: string; titl
 export async function ensureContent(tabId: number): Promise<void> {
   const response = await chrome.runtime.sendMessage({ type: 'ENSURE_CONTENT', tabId });
   if (response?.type === 'ERROR') throw new Error(response.message);
+}
+
+export async function attachToTab(tab: { tabId: number; url: string }): Promise<void> {
+  await requestPageAccess(tab.url);
+  await ensureContent(tab.tabId);
 }
 
 export async function forward(tabId: number, message: HostToContentMessage): Promise<void> {

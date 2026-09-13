@@ -10,7 +10,7 @@ export default defineConfig({
       'Review web accessibility with automated checks, guided manual testing, DOM inspection, and keyboard tools.',
     version: '1.0.0',
     permissions: ['activeTab', 'scripting', 'storage', 'sidePanel'],
-    host_permissions: ['http://*/*', 'https://*/*', 'file://*/*'],
+    optional_host_permissions: ['http://*/*', 'https://*/*'],
     action: {
       default_title: 'Open A11yCompass',
       default_icon: {
@@ -30,6 +30,8 @@ export default defineConfig({
   hooks: {
     'build:manifestGenerated': (_wxt, manifest) => {
       delete manifest.side_panel;
+      delete manifest.content_scripts;
+      delete manifest.host_permissions;
     },
   },
 });
