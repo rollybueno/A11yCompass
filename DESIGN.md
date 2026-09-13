@@ -22,39 +22,39 @@ colors:
 typography:
   ui:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "16px"
+    fontSize: "18px"
     fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.55
     letterSpacing: "0.01em"
   title:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "20px"
+    fontSize: "22px"
     fontWeight: 700
     lineHeight: 1.25
     letterSpacing: "-0.02em"
   heading:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "18px"
+    fontSize: "20px"
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "-0.01em"
   caption:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "14px"
+    fontSize: "16px"
     fontWeight: 400
-    lineHeight: 1.45
+    lineHeight: 1.5
     letterSpacing: "0.01em"
   kicker:
     fontFamily: '"Atkinson Hyperlegible", "Segoe UI", sans-serif'
-    fontSize: "14px"
+    fontSize: "16px"
     fontWeight: 700
-    lineHeight: 1.3
-    letterSpacing: "0.08em"
+    lineHeight: 1.35
+    letterSpacing: "0.04em"
   mono:
     fontFamily: "ui-monospace, \"Cascadia Code\", \"SF Mono\", Menlo, monospace"
-    fontSize: "14px"
+    fontSize: "16px"
     fontWeight: 400
-    lineHeight: 1.45
+    lineHeight: 1.5
     letterSpacing: "0"
 rounded:
   sm: "2px"
@@ -96,7 +96,7 @@ Light chart paper (`#f3efe4`) is the working surface because reviewers sit in mi
 
 ## Typography
 
-Atkinson Hyperlegible is the only UI family. It exists because the Braille Institute designed it for low-vision readers, which is a product-specific reason. Body text is 16px with 1.5 line-height; labels, selectors, and kickers stay at 14px so nothing in the panel falls into a caption-sized, unreadable range. Monospace is only for selectors, rule IDs, hex colors, and exported snippets.
+Atkinson Hyperlegible is the only UI family. It exists because the Braille Institute designed it for low-vision readers, which is a product-specific reason. Body text, tabs, and descriptions are 18px with 1.55 line-height. Labels, selectors, and kickers stay at 16px so nothing in the panel is smaller than comfortable reading size. Monospace is only for selectors, rule IDs, hex colors, and exported snippets.
 
 ## Layout
 

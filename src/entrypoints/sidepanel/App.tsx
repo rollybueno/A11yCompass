@@ -224,7 +224,14 @@ export function App() {
       </a>
       <header className="mast">
         <div className="brand">
-          <span className="compass" aria-hidden="true" />
+          <img
+            className="compass"
+            src={chrome.runtime.getURL('icons/icon-48.png')}
+            alt=""
+            width={28}
+            height={28}
+            aria-hidden="true"
+          />
           <div>
             <p className="product">A11yCompass</p>
             <p className="host" title={tab?.url}>

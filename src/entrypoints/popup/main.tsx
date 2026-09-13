@@ -7,7 +7,14 @@ function Popup() {
   return (
     <main className="sheet" style={{ width: 320, padding: 20 }}>
       <header className="brand" style={{ marginBottom: 16 }}>
-        <span className="compass" aria-hidden="true" />
+        <img
+          className="compass"
+          src={chrome.runtime.getURL('icons/icon-48.png')}
+          alt=""
+          width={28}
+          height={28}
+          aria-hidden="true"
+        />
         <div>
           <p className="product">A11yCompass</p>
           <p className="host">Guided accessibility review</p>
