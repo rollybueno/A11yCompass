@@ -6,20 +6,20 @@ const STYLE = `
   pointer-events: none;
   z-index: 2147483646;
   box-sizing: border-box;
-  border: 2px solid #c23b22;
-  background: rgba(194, 59, 34, 0.08);
-  outline: 1px solid #faf7f0;
+  border: 2px solid #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  outline: 1px solid #ffffff;
 }
 .caption {
   position: fixed;
   z-index: 2147483647;
   pointer-events: none;
   max-width: min(360px, 90vw);
-  background: #1c2430;
-  color: #faf7f0;
-  font: 14px/1.45 "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  background: #0f172a;
+  color: #ffffff;
+  font: 16px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   padding: 8px 10px;
-  border-radius: 2px;
+  border-radius: 8px;
   box-shadow: 0 1px 2px rgba(28, 36, 48, 0.35);
 }
 .tag {
@@ -27,9 +27,9 @@ const STYLE = `
   left: 0;
   top: 0;
   transform: translateY(-100%);
-  background: #1c2430;
-  color: #faf7f0;
-  font: 700 14px/1.3 "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+  background: #0f172a;
+  color: #ffffff;
+  font: 700 16px/1.3 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   letter-spacing: 0.04em;
   padding: 4px 8px;
   white-space: nowrap;
@@ -37,8 +37,8 @@ const STYLE = `
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.layer-box { border-color: #0f6e6b; background: rgba(15, 110, 107, 0.08); }
-.layer-box .tag { background: #0f6e6b; }
+.layer-box { border-color: #237c35; background: rgba(35, 124, 53, 0.08); }
+.layer-box .tag { background: #237c35; }
 `;
 
 interface OverlayRoot {

@@ -5,8 +5,8 @@ import '../sidepanel/styles.css';
 
 function Popup() {
   return (
-    <main className="sheet" style={{ width: 320, padding: 20 }}>
-      <header className="brand" style={{ marginBottom: 16 }}>
+    <main className="sheet popup">
+      <header className="brand">
         <img
           className="compass"
           src={chrome.runtime.getURL('icons/icon-48.png')}

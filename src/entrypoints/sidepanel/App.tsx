@@ -1,11 +1,3 @@
-/* A11yCompass side panel
-   THESIS: the live page is terrain; findings are waypoints, not a score. Refuses the scanner dashboard.
-   OWN-WORLD: Atkinson Hyperlegible on chart paper, ink type, vermillion needle, teal/ochre survey marks.
-   STORY: start a review, read status, open a finding, locate it on the page, inspect name/role, export.
-   FIRST VIEWPORT: header + host, review-status legend, Start review, layer tabs.
-   FORM: cartographic inspection worksheet; seed not used — spec-pinned side panel structure.
-*/
-
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type {
   AccessibilityReviewSettings,
@@ -278,28 +270,16 @@ export function App() {
       )}
 
       <section className="legend" aria-label="Review status">
-        <p className="kicker">Review status</p>
+        <p className="kicker">Automated review</p>
         <dl className="counts">
-          <div>
-            <dt>Automated</dt>
-            <dd>
-              {scannedAt ? (
-                <>
-                  <b>{countBy(results, 'error')}</b> errors · <b>{countBy(results, 'warning')}</b> warnings ·{' '}
-                  <b>{countBy(results, 'review')}</b> review
-                </>
-              ) : (
-                'Not surveyed yet'
-              )}
-            </dd>
-          </div>
-          <div>
-            <dt>Manual</dt>
-            <dd>
-              {manualDone} / {MANUAL_CHECKS.length} completed
-            </dd>
-          </div>
+          {(['error', 'warning', 'review'] as const).map((status) => (
+            <div key={status}>
+              <dt>{status === 'error' ? 'Errors' : status === 'warning' ? 'Warnings' : 'Review'}</dt>
+              <dd className={`mark-${status}`}>{scannedAt ? countBy(results, status) : '—'}</dd>
+            </div>
+          ))}
         </dl>
+        <p className="manual-progress">Manual review: {manualDone} / {MANUAL_CHECKS.length} completed</p>
         <div className="actions">
           <button type="button" className="primary" onClick={() => void startReview()} disabled={busy}>
             {busy ? 'Surveying page…' : scannedAt ? 'Re-run review' : 'Start review'}
@@ -312,139 +292,142 @@ export function App() {
         )}
       </section>
 
-      <nav className="layers" aria-label="Review layers">
-        {VIEWS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className={view === item.id ? 'layer is-active' : 'layer'}
-            aria-current={view === item.id ? 'page' : undefined}
-            onClick={() => setView(item.id)}
-          >
-            {item.label}
-          </button>
-        ))}
-      </nav>
+      <div className="workspace">
+        <nav className="layers" aria-label="Review layers">
+          {VIEWS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={view === item.id ? 'layer is-active' : 'layer'}
+              aria-current={view === item.id ? 'page' : undefined}
+              onClick={() => setView(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
 
-      <main id="main">
-        {view === 'overview' && (
-          <Overview
-            scannedAt={scannedAt}
-            results={results}
-            manualDone={manualDone}
-            onOpenIssues={() => setView('issues')}
-            onExportMd={() => {
-              const s = session();
-              if (s) download('accessibility-review.md', exportMarkdown(s), 'text/markdown');
-            }}
-            onExportJson={() => {
-              const s = session();
-              if (s) download('accessibility-review.json', exportJson(s), 'application/json');
-            }}
-            onCopy={() => {
-              const s = session();
-              if (!s) return;
-              void navigator.clipboard.writeText(exportMarkdown(s));
-              setCopied('report');
-              window.setTimeout(() => setCopied(null), 2000);
-            }}
-            copied={copied === 'report'}
-          />
-        )}
+        <main id="main">
+          <h1 className="view-title">{VIEWS.find((item) => item.id === view)?.label}</h1>
+          {view === 'overview' && (
+            <Overview
+              scannedAt={scannedAt}
+              results={results}
+              manualDone={manualDone}
+              onOpenIssues={() => setView('issues')}
+              onExportMd={() => {
+                const s = session();
+                if (s) download('accessibility-review.md', exportMarkdown(s), 'text/markdown');
+              }}
+              onExportJson={() => {
+                const s = session();
+                if (s) download('accessibility-review.json', exportJson(s), 'application/json');
+              }}
+              onCopy={() => {
+                const s = session();
+                if (!s) return;
+                void navigator.clipboard.writeText(exportMarkdown(s));
+                setCopied('report');
+                window.setTimeout(() => setCopied(null), 2000);
+              }}
+              copied={copied === 'report'}
+            />
+          )}
 
-        {view === 'issues' && (
-          <Issues
-            results={visibleResults}
-            selectedId={selectedId}
-            selected={selected}
-            selectedRule={selectedRule}
-            showWcag={settings.showWcagReferences}
-            severityFilter={severityFilter}
-            categoryFilter={categoryFilter}
-            categories={categories as string[]}
-            onFilterSeverity={setSeverityFilter}
-            onFilterCategory={setCategoryFilter}
-            onSelect={(item) => {
-              setSelectedId(item.id);
-              if (settings.highlightOnSelection) void locate(item);
-            }}
-            onLocate={(item) => void locate(item)}
-            onCopy={(item) => void copySelector(item)}
-            copiedSelector={copied}
-          />
-        )}
+          {view === 'issues' && (
+            <Issues
+              results={visibleResults}
+              selectedId={selectedId}
+              selected={selected}
+              selectedRule={selectedRule}
+              showWcag={settings.showWcagReferences}
+              severityFilter={severityFilter}
+              categoryFilter={categoryFilter}
+              categories={categories as string[]}
+              onFilterSeverity={setSeverityFilter}
+              onFilterCategory={setCategoryFilter}
+              onSelect={(item) => {
+                setSelectedId(item.id);
+                if (settings.highlightOnSelection) void locate(item);
+              }}
+              onLocate={(item) => void locate(item)}
+              onCopy={(item) => void copySelector(item)}
+              copiedSelector={copied}
+            />
+          )}
 
-        {view === 'structure' && (
-          <Structure
-            structure={structure}
-            overlay={overlay}
-            onOverlay={async (mode) => {
-              if (!tab) return;
-              setOverlay(mode);
-              try {
-                await attachToTab(tab);
-                await forward(tab.tabId, { type: 'SET_OVERLAY', mode });
-              } catch (err) {
-                setError(err instanceof Error ? err.message : 'Could not set overlay.');
-              }
-            }}
-            onLocate={async (id) => {
-              if (!tab) return;
-              await forward(tab.tabId, { type: 'LOCATE', elementId: id });
-            }}
-          />
-        )}
-
-        {view === 'keyboard' && (
-          <KeyboardView
-            path={keyboardPath}
-            on={keyboardOn}
-            manual={manual}
-            onToggle={async () => {
-              if (!tab) return;
-              try {
-                await attachToTab(tab);
-                if (keyboardOn) {
-                  await forward(tab.tabId, { type: 'KEYBOARD_STOP' });
-                  setKeyboardOn(false);
-                } else {
-                  setKeyboardPath([]);
-                  await forward(tab.tabId, { type: 'KEYBOARD_START' });
-                  setKeyboardOn(true);
-                  setView('keyboard');
+          {view === 'structure' && (
+            <Structure
+              structure={structure}
+              overlay={overlay}
+              onOverlay={async (mode) => {
+                if (!tab) return;
+                setOverlay(mode);
+                try {
+                  await attachToTab(tab);
+                  await forward(tab.tabId, { type: 'SET_OVERLAY', mode });
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : 'Could not set overlay.');
                 }
-              } catch (err) {
-                setError(err instanceof Error ? err.message : 'Could not start keyboard review.');
-              }
-            }}
-            onReset={() => setKeyboardPath([])}
-            onManual={updateManual}
-          />
-        )}
+              }}
+              onLocate={async (id) => {
+                if (!tab) return;
+                await forward(tab.tabId, { type: 'LOCATE', elementId: id });
+              }}
+            />
+          )}
 
-        {view === 'inspector' && (
-          <InspectorView
-            snapshot={snapshot}
-            inspecting={inspecting}
-            onInspect={async () => {
-              if (!tab) return;
-              try {
-                await attachToTab(tab);
-                setInspecting(true);
-                await forward(tab.tabId, { type: 'INSPECT_START' });
-              } catch (err) {
+          {view === 'keyboard' && (
+            <KeyboardView
+              path={keyboardPath}
+              on={keyboardOn}
+              manual={manual}
+              onToggle={async () => {
+                if (!tab) return;
+                try {
+                  await attachToTab(tab);
+                  if (keyboardOn) {
+                    await forward(tab.tabId, { type: 'KEYBOARD_STOP' });
+                    setKeyboardOn(false);
+                  } else {
+                    setKeyboardPath([]);
+                    await forward(tab.tabId, { type: 'KEYBOARD_START' });
+                    setKeyboardOn(true);
+                    setView('keyboard');
+                  }
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : 'Could not start keyboard review.');
+                }
+              }}
+              onReset={() => setKeyboardPath([])}
+              onManual={updateManual}
+            />
+          )}
+
+          {view === 'inspector' && (
+            <InspectorView
+              snapshot={snapshot}
+              inspecting={inspecting}
+              onInspect={async () => {
+                if (!tab) return;
+                try {
+                  await attachToTab(tab);
+                  setInspecting(true);
+                  await forward(tab.tabId, { type: 'INSPECT_START' });
+                } catch (err) {
+                  setInspecting(false);
+                  setError(err instanceof Error ? err.message : 'Could not start inspector.');
+                }
+              }}
+              onCancel={async () => {
+                if (!tab) return;
+                await forward(tab.tabId, { type: 'INSPECT_STOP' });
                 setInspecting(false);
-                setError(err instanceof Error ? err.message : 'Could not start inspector.');
-              }
-            }}
-            onCancel={async () => {
-              if (!tab) return;
-              await forward(tab.tabId, { type: 'INSPECT_STOP' });
-              setInspecting(false);
-            }}
-          />
-        )}
-      </main>
+              }}
+            />
+          )}
+        </main>
+      </div>
     </div>
   );
 }
